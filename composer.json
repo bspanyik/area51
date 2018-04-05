@@ -1,0 +1,26 @@
+{
+    "name": "bspanyik/area51",
+    "description": "Area 51 - how to catch an invisible robot in a squre shaped test chamber",
+    "license": "mit",
+    "authors": [
+        {
+            "name": "bspanyik",
+            "email": "spanyik.balazs@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "config": {
+        "platform": {
+            "php": "7.2"
+        },
+        "sort-packages": true
+    },
+
+    "autoload": {
+        "psr-4": {
+            "Area51\\": "src/"
+        }
+    },
+
+    "require": {}
+}
