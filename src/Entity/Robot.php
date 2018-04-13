@@ -33,4 +33,5 @@ class Robot
         $this->operator = $operator;
         $this->room = $room;
     }
+
 }

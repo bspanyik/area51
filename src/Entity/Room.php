@@ -16,6 +16,11 @@ class Room
     /** @var int */
     protected $robotY;
 
+    /**
+     * Room constructor.
+     * @param $width
+     * @param $height
+     */
     public function __construct($width, $height)
     {
         $this->width = $width;
