@@ -7,7 +7,7 @@ use Area51\Entity\Robot;
 class RobotFactory
 {
     /** @var RoomFactory */
-    protected $roomFactory;
+    private $roomFactory;
 
     /**
      * RobotFactory constructor.
@@ -30,7 +30,7 @@ class RobotFactory
     /**
      * @return string
      */
-    protected function generateUniqueId()
+    private function generateUniqueId()
     {
         return uniqid();
     }
