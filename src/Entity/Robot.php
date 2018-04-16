@@ -7,19 +7,19 @@ class Robot
     const MAX_MOVE_DISTANCE = 5;
 
     /** @var string */
-    protected $id;
+    private $id;
 
     /** @var string */
-    protected $operator = '';
+    private $operator = '';
 
     /** @var int */
-    protected $salary = 0;
+    private $salary = 0;
 
     /** @var bool */
-    protected $escaped = false;
+    private $escaped = false;
 
     /** @var Room */
-    protected $room;
+    private $room;
 
     /**
      * Robot constructor.

@@ -5,16 +5,16 @@ namespace Area51\Entity;
 class Room
 {
     /** @var int */
-    protected $width;
+    private $width;
 
     /** @var int */
-    protected $height;
+    private $height;
 
     /** @var int */
-    protected $robotX;
+    private $robotX;
 
     /** @var int */
-    protected $robotY;
+    private $robotY;
 
     /**
      * Room constructor.
@@ -28,7 +28,7 @@ class Room
         $this->initRobot();
     }
 
-    protected function initRobot()
+    private function initRobot()
     {
         $this->robotX = rand(0, $this->width - 1);
         $this->robotY = rand(0, $this->height - 1);
