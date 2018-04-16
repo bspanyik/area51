@@ -6,15 +6,15 @@ use Area51\Entity\Room;
 
 class RoomFactory
 {
-    const HALF_WIDTH_MAX  = 12;
-    const HALF_WIDTH_MIN  = 16;
+    const HALF_WIDTH_MIN  = 12;
+    const HALF_WIDTH_MAX  = 16;
     const HALF_HEIGHT_MIN = 6;
     const HALF_HEIGHT_MAX = 10;
 
     /**
      * @return Room
      */
-    public function make()
+    public function make(): Room
     {
         return new Room($this->calcWidth(), $this->calcHeight());
     }
@@ -22,16 +22,25 @@ class RoomFactory
     /**
      * @return int
      */
-    protected function calcWidth()
+    private function calcWidth(): int
     {
-        return 1 + rand(self::HALF_WIDTH_MIN,  self::HALF_WIDTH_MAX) * 2;
+        return $this->createOddValue(rand(self::HALF_WIDTH_MIN,  self::HALF_WIDTH_MAX));
     }
 
     /**
      * @return int
      */
-    protected function calcHeight()
+    private function calcHeight(): int
     {
-        return 1 + rand(self::HALF_HEIGHT_MIN, self::HALF_HEIGHT_MAX) * 2;
+        return $this->createOddValue(rand(self::HALF_HEIGHT_MIN, self::HALF_HEIGHT_MAX));
+    }
+
+    /**
+     * @param int $value
+     * @return int
+     */
+    private function createOddValue(int $value): int
+    {
+        return 1 + $value * 2;
     }
 }
