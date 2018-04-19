@@ -2,7 +2,7 @@
 
 namespace Area51\Controller;
 
-class RobotController
+class RobotController implements ControllerInterface
 {
     public function createAction()
     {
