@@ -4,6 +4,8 @@ namespace Area51\System\Routing;
 
 class Route
 {
+    const REGEXP_PATTERN = "#^%s$#s";
+
     /** @var string */
     private $method;
 
@@ -37,7 +39,7 @@ class Route
      */
     public function getPattern(): string
     {
-        return $this->pattern;
+        return sprintf(self::REGEXP_PATTERN, $this->pattern);
     }
 
     /**
