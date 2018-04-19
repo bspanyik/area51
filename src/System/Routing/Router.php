@@ -2,7 +2,11 @@
 
 namespace Area51\System\Routing;
 
+use Area51\Controller\ControllerInterface;
 use Area51\System\Container;
+use InvalidArgumentException;
+use OutOfBoundsException;
+
 
 class Router
 {
@@ -23,7 +27,7 @@ class Router
      * @param Context $context
      * @param array $routes
      */
-    public function __construct(Container $container, Context $context, $routes)
+    public function __construct(Container $container, Context $context, array $routes)
     {
         $this->container = $container;
         $this->context = $context;
@@ -32,6 +36,7 @@ class Router
 
     /**
      * @return callable
+     * @throws InvalidArgumentException
      */
     public function getController(): callable
     {
@@ -39,7 +44,7 @@ class Router
 
         $callable = $this->createController($route->getController());
         if (!is_callable($callable)) {
-           throw new \InvalidArgumentException(sprintf('The controller for URI "%s" is not callable. %s', $this->context->getPath(), print_r($callable, true)));
+           throw new InvalidArgumentException(sprintf('The controller for URI "%s" is not callable. %s', $this->context->getPath(), print_r($callable, true)));
         }
 
         return $callable;
@@ -48,7 +53,7 @@ class Router
     /**
      * @return array
      */
-    public function getParameters()
+    public function getParameters(): array
     {
         $route = $this->getRoute();
 
@@ -84,6 +89,7 @@ class Router
 
     /**
      * @return Route
+     * @throws OutOfBoundsException
      */
     private function prepareRoute(): Route
     {
@@ -94,7 +100,7 @@ class Router
 
 
         if (!isset($this->routes[$resource])) {
-            throw new \OutOfBoundsException(sprintf('No controller found for URI "%s"', $path));
+            throw new OutOfBoundsException(sprintf('No controller found for URI "%s"', $path));
         }
 
         /** @var Route $route */
@@ -104,29 +110,34 @@ class Router
             }
         }
 
-        throw new \OutOfBoundsException(sprintf('No controller found for URI "%s"', $path));
+        throw new OutOfBoundsException(sprintf('No controller found for URI "%s"', $path));
     }
 
     /**
      * @param array $controllerArray
      * @return callable
+     * @throws InvalidArgumentException
      */
     private function createController(array $controllerArray): callable
     {
         if (!is_array($controllerArray) || count($controllerArray) < 2) {
-            throw new \InvalidArgumentException(sprintf('Invalid controller, not array, or method missing. %s', print_r($controllerArray, true)));
+            throw new InvalidArgumentException(sprintf('Invalid controller, not array, or method missing. %s', print_r($controllerArray, true)));
         }
 
         list($controller, $action) = $controllerArray;
 
         if (!class_exists($controller)) {
-            throw new \InvalidArgumentException(sprintf('Controller class "%s" does not exist.', $controller));
+            throw new InvalidArgumentException(sprintf('Controller class "%s" does not exist.', $controller));
         }
 
-        return array($this->instantiateController($controller), $action);
+        return [$this->instantiateController($controller), $action];
     }
 
-    private function instantiateController($class)
+    /**
+     * @param string $class
+     * @return ControllerInterface
+     */
+    private function instantiateController(string $class): ControllerInterface
     {
         if ($this->container->has($class)) {
             return $this->container->get($class);
