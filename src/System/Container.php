@@ -2,9 +2,12 @@
 
 namespace Area51\System;
 
+use OutOfBoundsException;
+use UnexpectedValueException;
+
 class Container
 {
-    /** @var callable[] */
+    /** @var array */
     private $definitions;
 
     /** @var array */
@@ -27,7 +30,7 @@ class Container
      * @param string $name
      * @return bool
      */
-    public function has($name): bool
+    public function has(string $name): bool
     {
         return $this->hasResolved($name) || $this->hasDefinition($name);
     }
@@ -38,13 +41,11 @@ class Container
      */
     public function add(string $name, $value)
     {
-        if (!$this->has($name)) {
-            $this->resolvedEntries[$name] = $value;
-        }
+        $this->resolvedEntries[$name] = $value;
     }
 
     /**
-     * @param $name
+     * @param string $name
      * @return mixed
      */
     public function get(string $name)
@@ -79,32 +80,32 @@ class Container
     }
 
     /**
-     * @param $name
-     * @return callable
-     * @throws \OutOfBoundsException
+     * @param string $name
+     * @return mixed
+     * @throws OutOfBoundsException
      */
-    private function getDefinition($name)
+    private function getDefinition(string $name)
     {
         if (!$this->hasDefinition($name)) {
-            throw new \OutOfBoundsException(sprintf('No definitions were found in the container for name: %s.', $name));
+            throw new OutOfBoundsException(sprintf('No definitions were found in the container for name: %s.', $name));
         }
 
         return $this->definitions[$name];
     }
 
     /**
-     * @param string $entryName
+     * @param string $name
      * @param mixed $definition
      * @return mixed
-     * @throws \UnexpectedValueException
+     * @throws UnexpectedValueException
      */
-    private function resolveDefinition($entryName, $definition)
+    private function resolveDefinition(string $name, $definition)
     {
-        if (isset($this->entriesBeingResolved[$entryName])) {
-            throw new \UnexpectedValueException(sprintf('Circular dependency detected while trying to resolve entry %s', $entryName));
+        if (isset($this->entriesBeingResolved[$name])) {
+            throw new UnexpectedValueException(sprintf('Circular dependency detected while trying to resolve entry %s', $name));
         }
 
-        $this->entriesBeingResolved[$entryName] = true;
+        $this->entriesBeingResolved[$name] = true;
 
         try {
             if (is_callable($definition)) {
@@ -113,7 +114,7 @@ class Container
                 $value = $definition;
             }
         } finally {
-            unset($this->entriesBeingResolved[$entryName]);
+            unset($this->entriesBeingResolved[$name]);
         }
 
         return $value;
