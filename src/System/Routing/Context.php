@@ -85,7 +85,7 @@ class Context
     /**
      * @return string
      */
-    private function prepareRequestUri()
+    private function prepareRequestUri(): string
     {
         $requestUri = $_SERVER['REQUEST_URI'] ?? '';
         $schemeAndHttpHost = $this->getSchemeAndHttpHost();
@@ -159,7 +159,7 @@ class Context
         $scheme = $this->getScheme();
         $port = $this->getPort();
 
-        if (('http' === $scheme && 80 === $port) || ('https' === $scheme && 443 === $port)) {
+        if ($this->isStandardRequest($scheme, $port)) {
             return $this->prepareHost();
         }
 
@@ -171,7 +171,41 @@ class Context
      */
     private function getPort(): int
     {
+        if (isset($_SERVER['SERVER_PORT']) && is_numeric($_SERVER['SERVER_PORT'])) {
+            return (int) $_SERVER['SERVER_PORT'];
+        }
+
         return 'https' === $this->getScheme() ? 443 : 80;
+    }
+
+    /**
+     * @param string $scheme
+     * @param int $port
+     * @return bool
+     */
+    private function isStandardRequest(string $scheme, int $port): bool
+    {
+        return $this->isStandardHttpRequest($scheme, $port) || $this->isStandardHttpsRequest($scheme, $port);
+    }
+
+    /**
+     * @param string $scheme
+     * @param int $port
+     * @return bool
+     */
+    private function isStandardHttpRequest(string $scheme, int $port): bool
+    {
+        return 'http' === $scheme && 80 === $port;
+    }
+
+    /**
+     * @param string $scheme
+     * @param int $port
+     * @return bool
+     */
+    private function isStandardHttpsRequest(string $scheme, int $port): bool
+    {
+        return 'https' === $scheme && 443 === $port;
     }
 
     /**
