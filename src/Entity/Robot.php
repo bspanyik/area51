@@ -13,6 +13,9 @@ class Robot
     private $operator = '';
 
     /** @var int */
+    private $cycle = 0;
+
+    /** @var int */
     private $salary = 0;
 
     /** @var bool */
@@ -31,7 +34,18 @@ class Robot
     {
         $this->id = $id;
         $this->operator = $operator;
+        $this->cycle = 0;
         $this->room = $room;
+    }
+
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function __wakeup()
+    {
+        $this->cycle += 1;
     }
 
 }
