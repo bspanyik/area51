@@ -1,16 +1,18 @@
 <?php
 
-use Area51\System\Routing\Route;
 use Area51\Controller\RobotController;
+use Area51\Manager\RobotCreationManager;
+use Area51\System\Routing\Route;
+use Area51\Validator\EmailValidator;
 
 return [
     '/robot' => [
 
         new Route(
-            'GET',
+            'POST',
             '/robot',
             [RobotController::class, 'createAction'],
-            []
+            [EmailValidator::class, 'email', RobotCreationManager::class]
         ),
 
         new Route(
