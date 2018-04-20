@@ -42,6 +42,19 @@ class Context
     }
 
     /**
+     * @return array
+     */
+    public function getPayload(): array
+    {
+        $payload = json_decode(file_get_contents('php://input'), true);
+        if (false === $payload || null === $payload) {
+            return [];
+        }
+
+        return $payload;
+    }
+
+    /**
      * @return string
      */
     private function preparePath(): string
