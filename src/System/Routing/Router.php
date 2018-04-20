@@ -22,6 +22,9 @@ class Router
     /** @var Route */
     private $route;
 
+    /** @var array */
+    private $matchedParams = [];
+
     /**
      * @param Container $container
      * @param Context $context
@@ -58,18 +61,20 @@ class Router
         $route = $this->getRoute();
 
         $params = [];
+        $payload = $this->context->getPayload();
 
         if ($route->hasParameters()) {
             foreach ($route->getParameters() as $parameter) {
                 if ($this->container->has($parameter)) {
                     $params[] = $this->container->get($parameter);
+                } elseif (array_key_exists($parameter, $this->matchedParams)) {
+                    $params[] = $this->matchedParams[$parameter];
+                } elseif (array_key_exists($parameter, $payload)) {
+                    $params[] = $payload[$parameter];
+                } else {
+                    throw new InvalidArgumentException(sprintf('Cannot resolve necessary method parameter: %s', $parameter));
                 }
             }
-        }
-
-        preg_match($route->getPattern(), $this->context->getPath(), $matches);
-        if (!empty($matches)) {
-            $params[] = array_merge($params, $matches);
         }
 
         return $params;
@@ -105,7 +110,7 @@ class Router
 
         /** @var Route $route */
         foreach ($this->routes[$resource] as $route) {
-            if ($route->getMethod() === $this->context->getMethod() && preg_match($route->getPattern(), $path, $matches)) {
+            if ($route->getMethod() === $this->context->getMethod() && preg_match($route->getPattern(), $path, $this->matchedParams)) {
                 return $route;
             }
         }
@@ -145,4 +150,5 @@ class Router
 
         return new $class();
     }
+
 }
