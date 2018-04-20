@@ -1,17 +1,11 @@
 <?php
 require 'vendor/autoload.php';
 
-$roomFactory  = new Area51\Factory\RoomFactory();
-$robotFactory = new Area51\Factory\RobotFactory($roomFactory);
-$robot = $robotFactory->make('akárki@valami.hu');
-
-echo 'Welcome to Area 51...';
-echo '<pre>' . print_r($robot, true) . '</pre>';
-
-$routes = require 'config/routes.php';
+$services = require 'config/services.php';
+$routes   = require 'config/routes.php';
 
 try {
-    $container = new Area51\System\Container();
+    $container = new Area51\System\Container($services);
     $context   = new Area51\System\Routing\Context();
     $router    = new Area51\System\Routing\Router($container, $context, $routes);
 
