@@ -15,8 +15,8 @@ return [
         return new RoomFactory();
     },
 
-    RobotFactory::class => function(Container $c) {
-        return new RobotFactory($c->get(RoomFactory::class));
+    RobotFactory::class => function() {
+        return new RobotFactory();
     },
 
     RobotStorageManager::class => function() {
@@ -24,6 +24,6 @@ return [
     },
 
     RobotCreationManager::class => function(Container $c) {
-        return new RobotCreationManager($c->get(RobotStorageManager::class), $c->get(RobotFactory::class));
+        return new RobotCreationManager($c->get(RobotStorageManager::class), $c->get(RobotFactory::class), $c->get(RoomFactory::class));
     },
 ];

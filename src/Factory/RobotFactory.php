@@ -3,28 +3,18 @@
 namespace Area51\Factory;
 
 use Area51\Entity\Robot;
+use Area51\Entity\Room;
 
 class RobotFactory
 {
-    /** @var RoomFactory */
-    private $roomFactory;
-
-    /**
-     * RobotFactory constructor.
-     * @param RoomFactory $roomFactory
-     */
-    public function __construct(RoomFactory $roomFactory)
-    {
-        $this->roomFactory = $roomFactory;
-    }
-
     /**
      * @param string $operator
+     * @param Room $room
      * @return Robot
      */
-    public function make(string $operator)
+    public function make(string $operator, Room $room)
     {
-        return new Robot($this->generateUniqueId(), $operator, $this->roomFactory->make());
+        return new Robot($this->generateUniqueId(), $operator, $room);
     }
 
     /**

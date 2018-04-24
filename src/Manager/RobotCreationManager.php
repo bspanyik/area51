@@ -3,6 +3,7 @@
 namespace Area51\Manager;
 
 use Area51\Factory\RobotFactory;
+use Area51\Factory\RoomFactory;
 
 class RobotCreationManager
 {
@@ -14,16 +15,23 @@ class RobotCreationManager
     /**
      * @var RobotFactory
      */
-    private $factory;
+    private $robotFactory;
+
+    /**
+     * @var RoomFactory
+     */
+    private $roomFactory;
 
     /**
      * @param RobotStorageManager $storageManager
-     * @param RobotFactory $factory
+     * @param RobotFactory $robotFactory
+     * @param RoomFactory $roomFactory
      */
-    public function __construct(RobotStorageManager $storageManager, RobotFactory $factory)
+    public function __construct(RobotStorageManager $storageManager, RobotFactory $robotFactory, RoomFactory $roomFactory)
     {
         $this->storageManager = $storageManager;
-        $this->factory = $factory;
+        $this->robotFactory = $robotFactory;
+        $this->roomFactory = $roomFactory;
     }
 
     /**
@@ -32,8 +40,10 @@ class RobotCreationManager
      */
     public function create(string $email): string
     {
-        $robot = $this->factory->make($email);
+        $room  = $this->roomFactory->make();
+        $robot = $this->robotFactory->make($email, $room);
         $this->storageManager->persist($robot);
+
         return $robot->getId();
     }
 }
