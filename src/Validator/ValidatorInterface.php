@@ -4,5 +4,5 @@ namespace Area51\Validator;
 
 interface ValidatorInterface
 {
-    public function validate($data): bool;
+    public function validate($request): array;
 }
