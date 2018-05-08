@@ -6,26 +6,37 @@ class Robot
 {
     const MAX_MOVE_DISTANCE = 5;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     private $id;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     private $operator = '';
 
-    /** @var int */
+    /**
+     * @var int
+     */
     private $cycle = 0;
 
-    /** @var int */
+    /**
+     * @var int
+     */
     private $salary = 0;
 
-    /** @var bool */
+    /**
+     * @var bool
+     */
     private $escaped = false;
 
-    /** @var Room */
+    /**
+     * @var Room
+     */
     private $room;
 
     /**
-     * Robot constructor.
      * @param string $id
      * @param string $operator
      * @param Room $room
@@ -38,14 +49,34 @@ class Robot
         $this->room = $room;
     }
 
+    /**
+     * @return string
+     */
     public function getId()
     {
         return $this->id;
     }
 
+    /**
+     * increases roboty lifecycle when robot wakes up
+     */
     public function __wakeup()
     {
         $this->cycle += 1;
+    }
+
+    /**
+     * asks Room to control Robot movement
+     *
+     * @param string $direction
+     * @param int $distance
+     * @return int
+     */
+    public function move(string $direction, int $distance): int
+    {
+        $distance = min($distance, self::MAX_MOVE_DISTANCE);
+
+        return $this->room->handleRobotMove($direction, $distance);
     }
 
 }
