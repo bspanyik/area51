@@ -35,12 +35,21 @@ class RobotStorageManager
 
     /**
      * @param string $robotId
+     * @return bool
+     */
+    public function has(string $robotId): bool
+    {
+        return file_exists($this->path . $robotId);
+    }
+
+    /**
+     * @param string $robotId
      * @return Robot
      * @throws InvalidArgumentException
      */
     public function restore(string $robotId): Robot
     {
-        if (file_exists($this->path . $robotId)) {
+        if ($this->has($robotId)) {
             return unserialize(file_get_contents($this->path . $robotId));
         }
 
