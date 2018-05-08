@@ -7,17 +7,16 @@ use Area51\System\Container;
 use InvalidArgumentException;
 use OutOfBoundsException;
 
-
 class Router
 {
     /** @var Container */
     private $container;
 
-    /** @var Context */
-    private $context;
-
     /** @var Route[] */
     private $routes;
+
+    /** @var Context */
+    private $context;
 
     /** @var Route */
     private $route;
@@ -27,14 +26,16 @@ class Router
 
     /**
      * @param Container $container
-     * @param Context $context
      * @param array $routes
+     * @param Context $context
      */
-    public function __construct(Container $container, Context $context, array $routes)
+    public function __construct(Container $container, array $routes, Context $context)
     {
         $this->container = $container;
-        $this->context = $context;
         $this->routes = $routes;
+        $this->context = $context;
+
+        $this->route = $this->getRoute();
     }
 
     /**
@@ -43,11 +44,9 @@ class Router
      */
     public function getController(): callable
     {
-        $route = $this->getRoute();
-
-        $callable = $this->createController($route->getController());
+        $callable = $this->createController($this->route->getController());
         if (!is_callable($callable)) {
-           throw new InvalidArgumentException(sprintf('The controller for URI "%s" is not callable. %s', $this->context->getPath(), print_r($callable, true)));
+            throw new InvalidArgumentException(sprintf('The controller for URI "%s" is not callable. %s', $this->context->getRequestPath(), print_r($callable, true)));
         }
 
         return $callable;
@@ -58,19 +57,14 @@ class Router
      */
     public function getParameters(): array
     {
-        $route = $this->getRoute();
-
         $params = [];
-        $payload = $this->context->getPayload();
 
-        if ($route->hasParameters()) {
-            foreach ($route->getParameters() as $parameter) {
+        if ($this->route->hasParameters()) {
+            foreach ($this->route->getParameters() as $parameter) {
                 if ($this->container->has($parameter)) {
                     $params[] = $this->container->get($parameter);
                 } elseif (array_key_exists($parameter, $this->matchedParams)) {
                     $params[] = $this->matchedParams[$parameter];
-                } elseif (array_key_exists($parameter, $payload)) {
-                    $params[] = $payload[$parameter];
                 } else {
                     throw new InvalidArgumentException(sprintf('Cannot resolve necessary method parameter: %s', $parameter));
                 }
@@ -85,37 +79,22 @@ class Router
      */
     private function getRoute(): Route
     {
-        if (!isset($this->route)) {
-            $this->route = $this->prepareRoute();
-        }
+        $requestMethod = $this->context->getRequestMethod();
+        $requestPath   = $this->context->getRequestPath();
 
-        return $this->route;
-    }
-
-    /**
-     * @return Route
-     * @throws OutOfBoundsException
-     */
-    private function prepareRoute(): Route
-    {
-        $this->route = null;
-
-        $path = $this->context->getPath();
-        $resource = '/' . explode('/', ltrim($path, '/'))[0];
-
-
+        $resource = '/' . explode('/', ltrim($requestPath, '/'))[0];
         if (!isset($this->routes[$resource])) {
-            throw new OutOfBoundsException(sprintf('No controller found for URI "%s"', $path));
+            throw new OutOfBoundsException(sprintf('No controller found for URI "%s"', $requestPath));
         }
 
         /** @var Route $route */
         foreach ($this->routes[$resource] as $route) {
-            if ($route->getMethod() === $this->context->getMethod() && preg_match($route->getPattern(), $path, $this->matchedParams)) {
+            if ($route->getMethod() === $requestMethod && preg_match($route->getPattern(), $requestPath, $this->matchedParams)) {
                 return $route;
             }
         }
 
-        throw new OutOfBoundsException(sprintf('No controller found for URI "%s"', $path));
+        throw new OutOfBoundsException(sprintf('No controller found for URI "%s"', $requestPath));
     }
 
     /**
