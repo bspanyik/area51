@@ -1,5 +1,5 @@
 <?php
-require 'vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 use Area51\System\Collection;
 use Area51\System\Container;
@@ -7,8 +7,8 @@ use Area51\System\Http\Request;
 use Area51\System\Routing\Context;
 use Area51\System\Routing\Router;
 
-$services = require 'config/services.php';
-$routes   = require 'config/routes.php';
+$services = require __DIR__ . '/../config/services.php';
+$routes = require __DIR__ . '/../config/routes.php';
 
 try {
     $container = new Container($services);
