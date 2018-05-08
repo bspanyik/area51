@@ -106,18 +106,6 @@ class Room
      * @param int $distance
      * @return int
      */
-    private function robotMovesUp($distance): int
-    {
-        $distance = min($this->robotY, $distance);
-        $this->robotY -= $distance;
-
-        return $distance;
-    }
-
-    /**
-     * @param int $distance
-     * @return int
-     */
     private function robotMovesRight($distance): int
     {
         $wallDistance = ($this->width - 1) - $this->robotX;
@@ -132,6 +120,18 @@ class Room
      * @return int
      */
     private function robotMovesDown($distance): int
+    {
+        $distance = min($this->robotY, $distance);
+        $this->robotY -= $distance;
+
+        return $distance;
+    }
+
+    /**
+     * @param int $distance
+     * @return int
+     */
+    private function robotMovesUp($distance): int
     {
         $wallDistance = ($this->height - 1) - $this->robotY;
         $distance = min($wallDistance, $distance);
